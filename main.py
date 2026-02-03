@@ -31,11 +31,11 @@ current_bloc = None
 
 
 
-DB_PATH = "/mnt/data/classrooms.db"
+DB_PATH = os.path.join(os.path.dirname(__file__), "classrooms.db")
 
 def initialize_db():
     # Ensure /mnt/data exists
-    os.makedirs("/mnt/data", exist_ok=True)
+    os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
     
     # Connect (will create the DB if it doesn't exist)
     conn = sqlite3.connect(DB_PATH)
