@@ -29,7 +29,7 @@ current_day = None
 current_bloc = None
 
 def initialize_db():
-    conn = sqlite3.connect('classroom.db')
+    conn = sqlite3.connect("/mnt/data/classrooms.db")
     c = conn.cursor()
     
     # Create table
@@ -112,7 +112,7 @@ def initialize_db():
     conn.close()
 
 def add_classroom(room_number):
-    conn = sqlite3.connect('classroom.db')
+    conn = sqlite3.connect("/mnt/data/classrooms.db")
     c = conn.cursor()
     
     # Insert a new classroom with all blocs set to 'close' for ALL days of the week
@@ -129,7 +129,7 @@ def add_classroom(room_number):
     conn.close()
 
 def update_bloc_status(room_number, day, bloc_number, status, has_printer, has_computer):
-    conn = sqlite3.connect('classroom.db')
+    conn = sqlite3.connect("/mnt/data/classrooms.db")
     c = conn.cursor()
 
     day = day.lower()
@@ -209,7 +209,7 @@ def get_current_day_and_bloc() -> tuple:
     return current_day, current_bloc
 
 def update_room_info(room_number, has_printer, has_computer):
-    conn = sqlite3.connect('classroom.db')
+    conn = sqlite3.connect("/mnt/data/classrooms.db")
     c = conn.cursor()
     
     if has_printer is not None:
@@ -225,7 +225,7 @@ def update_room_info(room_number, has_printer, has_computer):
     conn.close()
 
 def get_room_info(room_number) -> str: 
-    conn = sqlite3.connect('classroom.db')
+    conn = sqlite3.connect("/mnt/data/classrooms.db")
     c = conn.cursor()
     
     c.execute('''SELECT has_printer, has_computer 
@@ -237,7 +237,7 @@ def get_room_info(room_number) -> str:
     return info
 
 def get_open_rooms(day, bloc_number):
-    conn = sqlite3.connect('classroom.db')
+    conn = sqlite3.connect("/mnt/data/classrooms.db")
     c = conn.cursor()
 
     day = day.lower()
@@ -255,7 +255,7 @@ def get_open_rooms(day, bloc_number):
     return open_rooms
 
 def get_open_rooms_table(day, bloc_number):
-    conn = sqlite3.connect("classroom.db")
+    conn = sqlite3.connect("/mnt/data/classrooms.db")
 
     query = f"""
         SELECT 
