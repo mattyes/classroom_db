@@ -34,7 +34,9 @@ current_bloc = None
 DB_PATH = os.path.join(os.path.dirname(__file__), "classrooms.db")
 
 def initialize_db():
-    # Ensure /mnt/data exists
+    if os.path.exists(DB_PATH):
+        os.remove(DB_PATH)
+
     os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
     
     # Connect (will create the DB if it doesn't exist)
@@ -68,7 +70,7 @@ def initialize_db():
         CREATE TABLE IF NOT EXISTS classrooms_info (
             room_number TEXT PRIMARY KEY,
             has_printer TEXT,
-            has_computer TEXT''')
+            has_computer TEXT)''')
     
     conn.commit()
     conn.close()
