@@ -24,95 +24,58 @@
 import sqlite3
 from datetime import datetime
 import pandas as pd
+import os
 
 current_day = None
 current_bloc = None
 
+
+
+DB_PATH = "/mnt/data/classrooms.db"
+
 def initialize_db():
-    conn = sqlite3.connect("/mnt/data/classrooms.db")
+    # Ensure /mnt/data exists
+    os.makedirs("/mnt/data", exist_ok=True)
+    
+    # Connect (will create the DB if it doesn't exist)
+    conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
     
-    # Create table
-    c.execute('''CREATE TABLE IF NOT EXISTS classrooms_lundi 
-                 (room_number TEXT PRIMARY KEY,
-                  bloc_1 TEXT,
-                  bloc_2 TEXT,
-                  bloc_3 TEXT,
-                  bloc_4 TEXT,
-                  bloc_5 TEXT,
-                  bloc_6 TEXT,
-                  bloc_7 TEXT,
-                  bloc_8 TEXT,
-                  bloc_9 TEXT,
-                  bloc_10 TEXT,
-                  bloc_11 TEXT)''')
+    # Days of the week
+    days = ['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi']
     
-    c.execute('''CREATE TABLE IF NOT EXISTS classrooms_mardi 
-                 (room_number TEXT PRIMARY KEY,
-                  bloc_1 TEXT,
-                  bloc_2 TEXT,
-                  bloc_3 TEXT,
-                  bloc_4 TEXT,
-                  bloc_5 TEXT,
-                  bloc_6 TEXT,
-                  bloc_7 TEXT,
-                  bloc_8 TEXT,
-                  bloc_9 TEXT,
-                  bloc_10 TEXT,
-                  bloc_11 TEXT)''')
-
-    c.execute('''CREATE TABLE IF NOT EXISTS classrooms_mercredi
-                    (room_number TEXT PRIMARY KEY,
-                    bloc_1 TEXT,
-                    bloc_2 TEXT,
-                    bloc_3 TEXT,
-                    bloc_4 TEXT,
-                    bloc_5 TEXT,
-                    bloc_6 TEXT,
-                    bloc_7 TEXT,
-                    bloc_8 TEXT,
-                    bloc_9 TEXT,
-                    bloc_10 TEXT,
-                    bloc_11 TEXT)''')
-
-    c.execute('''CREATE TABLE IF NOT EXISTS classrooms_jeudi
-                    (room_number TEXT PRIMARY KEY,
-                    bloc_1 TEXT,
-                    bloc_2 TEXT,
-                    bloc_3 TEXT,
-                    bloc_4 TEXT,
-                    bloc_5 TEXT,
-                    bloc_6 TEXT,
-                    bloc_7 TEXT,
-                    bloc_8 TEXT,
-                    bloc_9 TEXT,
-                    bloc_10 TEXT,
-                    bloc_11 TEXT)''')
+    # Create tables for each day
+    for day in days:
+        c.execute(f'''
+            CREATE TABLE IF NOT EXISTS classrooms_{day} (
+                room_number TEXT PRIMARY KEY,
+                bloc_1 TEXT,
+                bloc_2 TEXT,
+                bloc_3 TEXT,
+                bloc_4 TEXT,
+                bloc_5 TEXT,
+                bloc_6 TEXT,
+                bloc_7 TEXT,
+                bloc_8 TEXT,
+                bloc_9 TEXT,
+                bloc_10 TEXT,
+                bloc_11 TEXT
+            )
+        ''')
     
-    c.execute('''CREATE TABLE IF NOT EXISTS classrooms_vendredi
-                    (room_number TEXT PRIMARY KEY,
-                    bloc_1 TEXT,
-                    bloc_2 TEXT,
-                    bloc_3 TEXT,
-                    bloc_4 TEXT,
-                    bloc_5 TEXT,
-                    bloc_6 TEXT,
-                    bloc_7 TEXT,
-                    bloc_8 TEXT,
-                    bloc_9 TEXT,
-                    bloc_10 TEXT,
-                    bloc_11 TEXT)''')
-
-    c.execute('''CREATE TABLE IF NOT EXISTS classrooms_info
-                    (room_number TEXT PRIMARY KEY,
-                    has_printer TEXT,
-                    has_computer TEXT)''')
-
+    # Info table
+    c.execute('''
+        CREATE TABLE IF NOT EXISTS classrooms_info (
+            room_number TEXT PRIMARY KEY,
+            has_printer TEXT,
+            has_computer TEXT''')
+    
     conn.commit()
     conn.close()
 
+
 def add_classroom(room_number):
-    conn = sqlite3.connect("/mnt/data/classrooms.db")
+    conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
     
     # Insert a new classroom with all blocs set to 'close' for ALL days of the week
@@ -129,7 +92,7 @@ def add_classroom(room_number):
     conn.close()
 
 def update_bloc_status(room_number, day, bloc_number, status, has_printer, has_computer):
-    conn = sqlite3.connect("/mnt/data/classrooms.db")
+    conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
 
     day = day.lower()
@@ -209,7 +172,7 @@ def get_current_day_and_bloc() -> tuple:
     return current_day, current_bloc
 
 def update_room_info(room_number, has_printer, has_computer):
-    conn = sqlite3.connect("/mnt/data/classrooms.db")
+    conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
     
     if has_printer is not None:
@@ -225,7 +188,7 @@ def update_room_info(room_number, has_printer, has_computer):
     conn.close()
 
 def get_room_info(room_number) -> str: 
-    conn = sqlite3.connect("/mnt/data/classrooms.db")
+    conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
     
     c.execute('''SELECT has_printer, has_computer 
@@ -237,7 +200,7 @@ def get_room_info(room_number) -> str:
     return info
 
 def get_open_rooms(day, bloc_number):
-    conn = sqlite3.connect("/mnt/data/classrooms.db")
+    conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
 
     day = day.lower()
@@ -255,7 +218,7 @@ def get_open_rooms(day, bloc_number):
     return open_rooms
 
 def get_open_rooms_table(day, bloc_number):
-    conn = sqlite3.connect("/mnt/data/classrooms.db")
+    conn = sqlite3.connect(DB_PATH)
 
     query = f"""
         SELECT 
