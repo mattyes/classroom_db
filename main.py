@@ -74,7 +74,6 @@ def initialize_db():
     conn.close()
     print("Database initialized.")
 
-
 def add_classroom(room_number):
     conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
@@ -105,11 +104,11 @@ def update_bloc_status(room_number, day, bloc_number, status, has_printer, has_c
                   SET bloc_{bloc_number} = ? 
                   WHERE room_number = ?''', (status, room_number))
     
-    if has_printer:
+    if has_printer is not None:
         c.execute('''UPDATE classrooms_info 
                      SET has_printer = ? 
                      WHERE room_number = ?''', (has_printer, room_number))
-    if has_computer:
+    if has_computer is not None:
         c.execute('''UPDATE classrooms_info 
                      SET has_computer = ? 
                      WHERE room_number = ?''', (has_computer, room_number))
