@@ -28,8 +28,12 @@ import os
 from zoneinfo import ZoneInfo
 
 DB_PATH = os.path.join(os.path.dirname(__file__), "classrooms.db")
+DB_MADE = False
 
 def initialize_db():
+    global DB_MADE
+    if DB_MADE:
+        return
     if os.path.exists(DB_PATH):
         os.remove(DB_PATH)
 
@@ -43,36 +47,33 @@ def initialize_db():
     days = ['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi']
     
     # Create tables for each day
-    try: 
-        for day in days:
-            c.execute(f'''
-                CREATE TABLE IF NOT EXISTS classrooms_{day} (
-                    room_number TEXT PRIMARY KEY,
-                    bloc_1 TEXT,
-                    bloc_2 TEXT,
-                    bloc_3 TEXT,
-                    bloc_4 TEXT,
-                    bloc_5 TEXT,
-                    bloc_6 TEXT,
-                    bloc_7 TEXT,
-                    bloc_8 TEXT,
-                    bloc_9 TEXT,
-                    bloc_10 TEXT,
-                    bloc_11 TEXT
-                )
-            ''')
-        
-        # Info table
-        c.execute('''
-            CREATE TABLE IF NOT EXISTS classrooms_info (
+    for day in days:
+        c.execute(f'''
+            CREATE TABLE IF NOT EXISTS classrooms_{day} (
                 room_number TEXT PRIMARY KEY,
-                has_printer TEXT,
-                has_computer TEXT)''')
-    except Exception as e:
-        print(f"Error creating tables: {e}")
+                bloc_1 TEXT,
+                bloc_2 TEXT,
+                bloc_3 TEXT,
+                bloc_4 TEXT,
+                bloc_5 TEXT,
+                bloc_6 TEXT,
+                bloc_7 TEXT,
+                bloc_8 TEXT,
+                bloc_9 TEXT,
+                bloc_10 TEXT,
+                bloc_11 TEXT
+            )
+        ''')
+    
+    # Info table
+    c.execute('''
+        CREATE TABLE IF NOT EXISTS classrooms_info (
+            room_number TEXT PRIMARY KEY,
+            has_printer TEXT,
+            has_computer TEXT)''')
     conn.commit()
     conn.close()
-    print("Database initialized.")
+    DB_MADE = True
 
 def add_classroom(room_number):
     conn = sqlite3.connect(DB_PATH)
@@ -93,6 +94,7 @@ def add_classroom(room_number):
 
 def update_bloc_status(room_number, day, bloc_number, status, has_printer, has_computer):
     conn = sqlite3.connect(DB_PATH)
+    print("connected to:", DB_PATH)
     c = conn.cursor()
 
     day = day.lower()
@@ -115,19 +117,6 @@ def update_bloc_status(room_number, day, bloc_number, status, has_printer, has_c
 
     conn.commit()
     conn.close()
-
-    conn = sqlite3.connect('classroom.db')
-    c = conn.cursor()
-
-    # Retrieve the status of all classrooms for the given bloc on a specific day
-    c.execute(f'''SELECT room_number, bloc_{bloc_number} FROM classrooms_{day}''')
-    rooms = c.fetchall()
-    conn.close()
-
-    rooms_open = [room for room, status in rooms if status == 'open']  
-    rooms_closed = [room for room, status in rooms if status == 'close']
-
-    return rooms_open, rooms_closed  
 
 def get_current_day_and_bloc() -> tuple:
     # Get current day of the week in french
