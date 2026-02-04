@@ -25,11 +25,7 @@ import sqlite3
 from datetime import datetime
 import pandas as pd
 import os
-
-current_day = None
-current_bloc = None
-
-
+from zoneinfo import ZoneInfo
 
 DB_PATH = os.path.join(os.path.dirname(__file__), "classrooms.db")
 
@@ -148,19 +144,19 @@ def get_current_day_and_bloc() -> tuple:
     # Define bloc time ranges
     bloc_times = [
         (8, 0, 8, 50),
-        (8, 51, 9, 45),
-        (9, 46, 10, 40),
-        (10, 41, 11, 35),
-        (11, 36, 12, 30),
-        (12, 31, 13, 25),
-        (13, 26, 14, 20),
-        (14, 21, 15, 15),
-        (15, 16, 16, 10),
-        (16, 11, 17, 5),
-        (17, 6, 18, 0)
+        (8, 50, 9, 45),
+        (9, 45, 10, 40),
+        (10, 40, 11, 35),
+        (11, 35, 12, 30),
+        (12, 30, 13, 25),
+        (13, 25, 14, 20),
+        (14, 20, 15, 15),
+        (15, 15, 16, 10),
+        (16, 10, 17, 5),
+        (17, 5, 18, 0)
     ]
     
-    now = datetime.now()
+    now = datetime.now(tz=ZoneInfo("America/New_York"))
     current_bloc = None
     
     for i, (start_hour, start_minute, end_hour, end_minute) in enumerate(bloc_times):
