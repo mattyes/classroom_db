@@ -43,31 +43,33 @@ def initialize_db():
     days = ['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi']
     
     # Create tables for each day
-    for day in days:
-        c.execute(f'''
-            CREATE TABLE IF NOT EXISTS classrooms_{day} (
+    try: 
+        for day in days:
+            c.execute(f'''
+                CREATE TABLE IF NOT EXISTS classrooms_{day} (
+                    room_number TEXT PRIMARY KEY,
+                    bloc_1 TEXT,
+                    bloc_2 TEXT,
+                    bloc_3 TEXT,
+                    bloc_4 TEXT,
+                    bloc_5 TEXT,
+                    bloc_6 TEXT,
+                    bloc_7 TEXT,
+                    bloc_8 TEXT,
+                    bloc_9 TEXT,
+                    bloc_10 TEXT,
+                    bloc_11 TEXT
+                )
+            ''')
+        
+        # Info table
+        c.execute('''
+            CREATE TABLE IF NOT EXISTS classrooms_info (
                 room_number TEXT PRIMARY KEY,
-                bloc_1 TEXT,
-                bloc_2 TEXT,
-                bloc_3 TEXT,
-                bloc_4 TEXT,
-                bloc_5 TEXT,
-                bloc_6 TEXT,
-                bloc_7 TEXT,
-                bloc_8 TEXT,
-                bloc_9 TEXT,
-                bloc_10 TEXT,
-                bloc_11 TEXT
-            )
-        ''')
-    
-    # Info table
-    c.execute('''
-        CREATE TABLE IF NOT EXISTS classrooms_info (
-            room_number TEXT PRIMARY KEY,
-            has_printer TEXT,
-            has_computer TEXT)''')
-    
+                has_printer TEXT,
+                has_computer TEXT)''')
+    except Exception as e:
+        print(f"Error creating tables: {e}")
     conn.commit()
     conn.close()
 
