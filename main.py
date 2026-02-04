@@ -72,6 +72,7 @@ def initialize_db():
         print(f"Error creating tables: {e}")
     conn.commit()
     conn.close()
+    print("Database initialized.")
 
 
 def add_classroom(room_number):
