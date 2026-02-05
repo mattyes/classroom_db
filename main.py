@@ -32,10 +32,6 @@ DB_MADE = False
 
 def initialize_db():
     global DB_MADE
-    if DB_MADE:
-        return
-    if os.path.exists(DB_PATH):
-        os.remove(DB_PATH)
 
     os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
     
